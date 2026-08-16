@@ -1,0 +1,47 @@
+{
+    "manifest_version": 3,
+
+    "name": "NSE Option Chain → Excel",
+
+    "version": "1.3.0",
+
+    "description": "Live NIFTY option chain to Excel.",
+
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxK+hvGN9PfF0QpafzONzJMrLbRFsati8R3ukux31J9KYWtSfPWU6kWfx7Ki/9tPUqy3fK2pXsgu5zRSfgezDSyFGPh5EHAyNaRX9Thb22iXUp/0IebKYv9phzpZDjJoLh1wZFFrkYOubtmF21T9lFxSqwsg5c9S9c7upqcIxG/h/bTlAkv8c21SmkaZtVm+/vnQoK1kkQHuiWBE3LOspCeJBDOiMJq4WJCWJJp8InBlGhfec7IJm551SU1h9qx64oiGv/Bp+Kr2A/bDYSj+KS/iSeCg2L+glXgfuD9e8+TdrtpqvS7urQ4cmfU+Ev0MYpf6r+OYllf0zKIsX5VgN8wIDAQAB",
+
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "notifications",
+        "storage",
+        "tabs"
+    ],
+
+    "host_permissions": [
+        "https://www.nseindia.com/*",
+        "http://127.0.0.1:5000/*"
+    ],
+
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.nseindia.com/*"
+            ],
+
+            "js": [
+                "schema_validator.js",
+                "content.js"
+            ],
+
+            "run_at": "document_idle"
+        }
+    ],
+
+    "background": {
+        "service_worker": "background.js"
+    },
+
+    "action": {
+        "default_popup": "popup.html"
+    }
+}

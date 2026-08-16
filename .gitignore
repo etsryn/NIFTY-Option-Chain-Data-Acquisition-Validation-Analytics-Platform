@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Runtime/cache files
+last_good_snapshot.json
+
+# Excel runtime/state
+~$*.xlsx
+*.xlsm
+*.xlsb
+
+# Local/generated files
+*.log
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+
+# Temporary files
+*.tmp
+*.temp

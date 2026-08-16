@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NIFTY Feed</title>
+
+
+    <style>
+
+        /* ====================================================
+           GLOBAL
+           ==================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            width: 330px;
+
+            margin: 0;
+
+            padding: 12px;
+
+            font-family:
+                Arial,
+                sans-serif;
+
+            background:
+                #ffffff;
+
+            color:
+                #111827;
+        }
+
+
+        /* ====================================================
+           HEADER
+           ==================================================== */
+
+        .header {
+
+            font-size:
+                16px;
+
+            font-weight:
+                700;
+
+            margin-bottom:
+                10px;
+
+            color:
+                #111827;
+        }
+
+
+        /* ====================================================
+           FEED STATUS
+           ==================================================== */
+
+        .status {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                7px;
+
+            padding:
+                7px 9px;
+
+            border-radius:
+                7px;
+
+            background:
+                #ecfdf5;
+
+            border:
+                1px solid #bbf7d0;
+
+            color:
+                #15803d;
+
+            font-size:
+                12px;
+
+            font-weight:
+                700;
+
+            margin-bottom:
+                8px;
+
+            transition:
+                background 0.15s ease,
+                border-color 0.15s ease,
+                color 0.15s ease;
+        }
+
+
+        .status.stopped {
+
+            background:
+                #f8fafc;
+
+            border-color:
+                #e2e8f0;
+
+            color:
+                #64748b;
+        }
+
+
+        .status.disconnected {
+
+            background:
+                #fef2f2;
+
+            border-color:
+                #fecaca;
+
+            color:
+                #dc2626;
+        }
+
+
+        .status.connecting {
+
+            background:
+                #fffbeb;
+
+            border-color:
+                #fde68a;
+
+            color:
+                #b45309;
+        }
+
+
+        /* ====================================================
+           STATUS DOT
+           ==================================================== */
+
+        .dot {
+
+            width:
+                7px;
+
+            height:
+                7px;
+
+            border-radius:
+                50%;
+
+            background:
+                #16a34a;
+
+            flex-shrink:
+                0;
+        }
+
+
+        .dot.stopped {
+
+            background:
+                #94a3b8;
+        }
+
+
+        .dot.disconnected {
+
+            background:
+                #dc2626;
+        }
+
+
+        .dot.connecting {
+
+            background:
+                #f59e0b;
+        }
+
+
+        /* ====================================================
+           INFORMATION PANEL
+           ==================================================== */
+
+        .info {
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius:
+                7px;
+
+            overflow:
+                hidden;
+
+            background:
+                #ffffff;
+        }
+
+
+        /* ====================================================
+           STANDARD ROW
+           ==================================================== */
+
+        .row {
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                flex-start;
+
+            gap:
+                10px;
+
+            padding:
+                6px 9px;
+
+            font-size:
+                11px;
+
+            border-bottom:
+                1px solid #f0f0f0;
+
+            min-height:
+                29px;
+        }
+
+
+        .row:last-of-type {
+
+            border-bottom:
+                none;
+        }
+
+
+        /* ====================================================
+           LABEL
+           ==================================================== */
+
+        .label {
+
+            color:
+                #6b7280;
+
+            flex-shrink:
+                0;
+
+            line-height:
+                1.4;
+        }
+
+
+        /* ====================================================
+           VALUE
+           ==================================================== */
+
+        .value {
+
+            color:
+                #111827;
+
+            font-weight:
+                600;
+
+            text-align:
+                right;
+
+            min-width:
+                0;
+
+            line-height:
+                1.4;
+
+            overflow-wrap:
+                anywhere;
+        }
+
+
+        /* ====================================================
+           VALUE STATES
+           ==================================================== */
+
+        .value.connected {
+
+            color:
+                #15803d;
+
+            font-weight:
+                700;
+        }
+
+
+        .value.disconnected {
+
+            color:
+                #dc2626;
+
+            font-weight:
+                700;
+        }
+
+
+        .value.stopped {
+
+            color:
+                #64748b;
+
+            font-weight:
+                700;
+        }
+
+
+        /* ====================================================
+           SCHEMA STATES
+           ==================================================== */
+
+        .schema-approved {
+
+            color:
+                #15803d;
+
+            font-weight:
+                700;
+        }
+
+
+        .schema-unknown {
+
+            color:
+                #b45309;
+
+            font-weight:
+                700;
+        }
+
+
+        .schema-blocked {
+
+            color:
+                #dc2626;
+
+            font-weight:
+                700;
+        }
+
+
+        .schema-unmounted {
+
+            color:
+                #64748b;
+
+            font-weight:
+                700;
+        }
+
+
+        /* ====================================================
+           FINGERPRINT SECTION
+           ==================================================== */
+
+        .fingerprint-row {
+
+            display:
+                block;
+
+            padding:
+                7px 9px;
+
+            border-top:
+                1px solid #f0f0f0;
+        }
+
+
+        .fingerprint-label {
+
+            display:
+                block;
+
+            color:
+                #6b7280;
+
+            font-size:
+                11px;
+
+            line-height:
+                1.4;
+
+            margin-bottom:
+                4px;
+        }
+
+
+        .fingerprint-value {
+
+            display:
+                block;
+
+            width:
+                100%;
+
+            box-sizing:
+                border-box;
+
+            padding:
+                5px 6px;
+
+            border-radius:
+                5px;
+
+            background:
+                #f8fafc;
+
+            border:
+                1px solid #e5e7eb;
+
+            color:
+                #374151;
+
+            font-family:
+                "Consolas",
+                "Courier New",
+                monospace;
+
+            font-size:
+                8px;
+
+            line-height:
+                1.35;
+
+            word-break:
+                break-all;
+
+            overflow-wrap:
+                anywhere;
+
+            text-align:
+                left;
+
+            user-select:
+                text;
+
+            min-height:
+                25px;
+        }
+
+
+        /* ====================================================
+           FOOTER
+           ==================================================== */
+
+        .footer {
+
+            margin-top:
+                8px;
+
+            padding:
+                0 2px;
+
+            text-align:
+                center;
+
+            color:
+                #9ca3af;
+
+            font-size:
+                9px;
+
+            line-height:
+                1.4;
+
+            min-height:
+                13px;
+        }
+
+
+        /* ====================================================
+           OPTIONAL VISUAL STATE FOR ACTIVE FINGERPRINT
+           ==================================================== */
+
+        .fingerprint-value.active {
+
+            color:
+                #374151;
+
+            background:
+                #f8fafc;
+        }
+
+
+        .fingerprint-value.inactive {
+
+            color:
+                #94a3b8;
+
+            background:
+                #f8fafc;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- ======================================================
+         HEADER
+         ====================================================== -->
+
+    <div class="header">
+        NIFTY Option Chain
+    </div>
+
+
+    <!-- ======================================================
+         OVERALL FEED STATUS
+         ====================================================== -->
+
+    <div
+        class="status stopped"
+        id="feedStatus"
+    >
+
+        <span
+            class="dot stopped"
+            id="statusDot"
+        ></span>
+
+        <span id="statusText">
+            FEED STOPPED
+        </span>
+
+    </div>
+
+
+    <!-- ======================================================
+         INFORMATION PANEL
+         ====================================================== -->
+
+    <div class="info">
+
+
+        <!-- ==================================================
+             LAST UPDATE
+             ================================================== -->
+
+        <div class="row">
+
+            <span class="label">
+                Last update
+            </span>
+
+            <span
+                class="value"
+                id="lastUpdate"
+            >
+                —
+            </span>
+
+        </div>
+
+
+        <!-- ==================================================
+             NEXT UPDATE
+             ================================================== -->
+
+        <div class="row">
+
+            <span class="label">
+                Next update
+            </span>
+
+            <span
+                class="value"
+                id="nextUpdate"
+            >
+                Not scheduled
+            </span>
+
+        </div>
+
+
+        <!-- ==================================================
+             ROW COUNT
+             ================================================== -->
+
+        <div class="row">
+
+            <span class="label">
+                Rows captured
+            </span>
+
+            <span
+                class="value"
+                id="rows"
+            >
+                —
+            </span>
+
+        </div>
+
+
+        <!-- ==================================================
+             BACKEND
+             ================================================== -->
+
+        <div class="row">
+
+            <span class="label">
+                Backend
+            </span>
+
+            <span
+                class="value disconnected"
+                id="backend"
+            >
+                Disconnected
+            </span>
+
+        </div>
+
+
+        <!-- ==================================================
+             EXCEL
+             ================================================== -->
+
+        <div class="row">
+
+            <span class="label">
+                Excel
+            </span>
+
+            <span
+                class="value stopped"
+                id="excel"
+            >
+                Stopped
+            </span>
+
+        </div>
+
+
+        <!-- ==================================================
+             SCHEMA
+             ================================================== -->
+
+        <div class="row">
+
+            <span class="label">
+                Schema
+            </span>
+
+            <span
+                class="value schema-unmounted"
+                id="schema"
+            >
+                Unmounted
+            </span>
+
+        </div>
+
+
+        <!-- ==================================================
+             FINGERPRINT
+             ================================================== -->
+
+        <div class="fingerprint-row">
+
+            <span class="fingerprint-label">
+                Fingerprint
+            </span>
+
+
+            <span
+                class="fingerprint-value inactive"
+                id="fingerprint"
+            >
+                Not active
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ======================================================
+         FOOTER / SYSTEM MESSAGE
+         ====================================================== -->
+
+    <div
+        class="footer"
+        id="footer"
+    >
+        Feed stopped · restart to resume
+    </div>
+
+
+    <!-- ======================================================
+         POPUP LOGIC
+         ====================================================== -->
+
+    <script src="popup.js"></script>
+
+</body>
+
+</html>
